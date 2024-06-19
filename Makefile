@@ -39,9 +39,9 @@ NUM_ITERATIONS := 1000
 
 # Define a target that runs the command `NUM_ITERATIONS` times
 run_command_multiple_times:
-		@for i in $$(seq 1 $(NUM_ITERATIONS)); do \
-				$(MAKE) run; \
-		done
+	@for i in $$(seq 1 $(NUM_ITERATIONS)); do \
+			$(MAKE) run; \
+	done
 
 average:
 	g++ Test/averageGuess.cpp -o Executables/averageGuess
@@ -58,11 +58,25 @@ NUM_ITERATIONS2 := 500
 
 # Define a target that runs the command `NUM_ITERATIONS` times
 run_bot_multiple_times:
-		@for i in $$(seq 1 $(NUM_ITERATIONS2)); do \
-				$(MAKE) bot; \
-		done
+	@for i in $$(seq 1 $(NUM_ITERATIONS2)); do \
+			$(MAKE) bot; \
+	done
 
 fails:
 	g++ Test/calculateFails.cpp -o Executables/calculateFails
 	./Executables/calculateFails
 	$(MAKE) cleanExecutables
+
+start:
+	g++ Game/optimisedWordleBot2.cpp -o Executables/optimisedWordleBot2
+	./Executables/optimisedWordleBot2
+	$(MAKE) cleanExecutables
+
+# Define a variable for the number of iterations
+NUM_ITERATIONS3 := 100
+
+# Define a target that runs the command `NUM_ITERATIONS` times
+run_start_multiple_times:
+	@for i in $$(seq 1 $(NUM_ITERATIONS3)); do \
+			$(MAKE) start; \
+	done
