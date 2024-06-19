@@ -1,3 +1,5 @@
+.SILENT:
+
 all: main
 
 CXX = clang++
@@ -27,5 +29,21 @@ play:
 	./Executables/playWordle
 	$(MAKE) cleanExecutables
 
+run:
+	g++ Game/wordle.cpp -o Executables/wordle
+	./Executables/wordle
+	$(MAKE) cleanExecutables
 
+# Define a variable for the number of iterations
+NUM_ITERATIONS := 1000
 
+# Define a target that runs the command `NUM_ITERATIONS` times
+run_command_multiple_times:
+		@for i in $$(seq 1 $(NUM_ITERATIONS)); do \
+				$(MAKE) run; \
+		done
+
+average:
+	g++ Test/averageGuess.cpp -o Executables/averageGuess
+	./Executables/averageGuess
+	$(MAKE) cleanExecutables
