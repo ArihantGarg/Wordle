@@ -112,8 +112,14 @@ string chooseOptimizedAnswer(set<string>& setWords){
 }
 
 
-int main()
+int main(int argc,char* argv[])
 {
+  // if(argc>1)
+  //   cout<<argv[1]<<endl;
+
+  if(argc>1)
+    generatedAnswer=orderedAnswers[stoi(argv[1])-1];
+  
   // cout<<"WORDLE BOT HAS STARTED\n";
   // cout<<"Word to be guessed by program : "<<generatedAnswer<<"\n";
 
@@ -134,8 +140,13 @@ int main()
   // cout<<"WORDLE BOT IS TERMINATING"<<endl;
 
   ofstream fout("Files/wordleGuessCount.txt",ios::app);
+  
+  fout<<guessNumber<<" "<<generatedAnswer;
 
-  fout<<guessNumber<<" "<<generatedAnswer<<endl;
+  if(argc>1)
+      fout<<" "<<argv[1];
+
+  fout<<endl;
 
   return 0;
 }

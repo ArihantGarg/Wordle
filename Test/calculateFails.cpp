@@ -20,6 +20,8 @@ int main()
     }
       
     totalCount++;
+
+    fin>>curWord;
   }
 
   cout<<failCount<<" "<<totalCount<<endl;

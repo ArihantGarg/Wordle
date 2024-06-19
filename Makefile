@@ -22,7 +22,7 @@ clean:
 
 
 cleanExecutables:
-	rm Executables/*
+	@rm Executables/*
 
 play:
 	g++ Game/playGame.cpp -o Executables/playWordle
@@ -80,3 +80,15 @@ run_start_multiple_times:
 	@for i in $$(seq 1 $(NUM_ITERATIONS3)); do \
 			$(MAKE) start; \
 	done
+
+# Define a variable for the number of iterations
+NUM_ITERATIONS4 := 2315
+
+# Define a target that runs the command `NUM_ITERATIONS` times
+start_all:
+	@for i in $$(seq 1454 $(NUM_ITERATIONS4)); do \
+		echo $$i; \
+		g++ Game/optimisedWordleBot2.cpp -o Executables/optimisedWordleBot2; \
+		./Executables/optimisedWordleBot2 $$i; \
+	done
+	$(MAKE) cleanExecutables

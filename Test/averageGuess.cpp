@@ -3,7 +3,7 @@ using namespace std;
 
 int main()
 {
-  ifstream fin("Files/wordleGuessCount.txt");
+  ifstream fin("Files/temp.txt");
   long long guessSum=0;
   long long num=0;
 
@@ -18,6 +18,8 @@ int main()
     guessSum+=curGuessCount;
     num++;
     v.push_back(make_pair(curGuessCount,curWord));
+
+    fin>>curWord;
   }
 
   cout<<guessSum<<" "<<num<<endl;
@@ -26,16 +28,16 @@ int main()
 
   cout<<averageGuess<<endl;
 
-  sort(v.begin(),v.end(),[](auto a,auto b){
-    return a.second<b.second;
-  });
+  // sort(v.begin(),v.end(),[](auto a,auto b){
+  //   return a.second<b.second;
+  // });
 
-  for(int i=0;i<v.size();i++){
-    cout<<v[i].first<<" "<<v[i].second<<endl;
-  }
+  // for(int i=0;i<v.size();i++){
+  //   cout<<v[i].first<<" "<<v[i].second<<endl;
+  // }
 
-  for(int i=1;i<v.size();i++){
-    if(v[i].second==v[i-1].second)
-      cout<<i<<" , "<<v[i].second<<endl;
-  }
+  // for(int i=1;i<v.size();i++){
+  //   if(v[i].second==v[i-1].second)
+  //     cout<<i<<" , "<<v[i].second<<endl;
+  // }
 }
