@@ -31,7 +31,7 @@ int main()
   string guess = "";
   string result = "";
 
-  cout << "Answer is : " << correctAnswer << "\n";
+  // cout << "Answer is : " << correctAnswer << "\n";
 
   while(!checkCorrectGuess(guess,correctAnswer)){
     

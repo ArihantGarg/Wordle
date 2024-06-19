@@ -11,7 +11,7 @@ string generatedAnswer=chooseAnswer(orderedAnswers);
 set<string> setWords(orderedWords.begin(),orderedWords.end());
 
 void makeguess(int guessNumber, string guess){
-  // cout<<"Guess "<<guessNumber<<": "<<guess<<endl;
+  cout<<"Guess "<<guessNumber<<": "<<guess<<endl;
 }
 
 string getResultPrompt(string guess){

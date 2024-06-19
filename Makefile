@@ -47,3 +47,22 @@ average:
 	g++ Test/averageGuess.cpp -o Executables/averageGuess
 	./Executables/averageGuess
 	$(MAKE) cleanExecutables
+
+bot:
+	g++ Game/optimisedWordleBot.cpp -o Executables/optimisedWordleBot
+	./Executables/optimisedWordleBot
+	$(MAKE) cleanExecutables
+
+# Define a variable for the number of iterations
+NUM_ITERATIONS2 := 500
+
+# Define a target that runs the command `NUM_ITERATIONS` times
+run_bot_multiple_times:
+		@for i in $$(seq 1 $(NUM_ITERATIONS2)); do \
+				$(MAKE) bot; \
+		done
+
+fails:
+	g++ Test/calculateFails.cpp -o Executables/calculateFails
+	./Executables/calculateFails
+	$(MAKE) cleanExecutables
