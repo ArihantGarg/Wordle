@@ -108,3 +108,16 @@
 4 llama
 4 smell
 4 evict
+3 ledge
+3 urban
+3 binge
+4 evade
+4 spike
+3 icily
+4 delve
+3 group
+4 flank
+3 chore
+4 fuzzy
+3 terse
+3 lying
