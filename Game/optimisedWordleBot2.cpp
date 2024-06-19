@@ -11,6 +11,8 @@ string generatedAnswer=chooseAnswer(orderedAnswers);
 
 set<string> setWords(orderedAnswers.begin(),orderedAnswers.end());
 
+set<string> otherSetWords(orderedWords.begin(),orderedWords.end());
+
 void printGuess(string guess){
   for(int i=0;i<5;i++){
     if(guess[i]==generatedAnswer[i])
@@ -74,32 +76,33 @@ string chooseOptimizedAnswer(set<string>& setWords){
   int minSubsetSize=(int)(1e9);
   string bestWord="";
 
-  for(auto curGuessWord:setWords){
-    map<pair<set<char>,string>,int> curWordSubsets;
+  for(auto curGuessWord:otherSetWords){
+    map<pair<int,string>,int> curWordSubsets;
     int curMaxSubsetSize=-1;
 
     for(auto possibleAnswerWord:setWords){
-      set<char> curSet;
+      int curInt=0;
       string curString="00000";
       
       for(int i=0;i<5;i++){
         if(curGuessWord[i]==possibleAnswerWord[i]){
           curString[i]=curGuessWord[i];
-          curSet.insert(curGuessWord[i]);
+          curInt|=(1<<(curGuessWord[i]-'a'));
         }
         else if(possibleAnswerWord.find(curGuessWord[i])!=string::npos){
-          curSet.insert(curGuessWord[i]);
+          curInt|=(1<<(curGuessWord[i]-'a'));
         }
       }
 
-      curWordSubsets[make_pair(curSet,curString)]++;
-      if(curWordSubsets[make_pair(curSet,curString)]>curMaxSubsetSize){
-        curMaxSubsetSize=curWordSubsets[make_pair(curSet,curString)];
+      curWordSubsets[make_pair(curInt,curString)]++;
+      if(curWordSubsets[make_pair(curInt,curString)]>curMaxSubsetSize){
+        curMaxSubsetSize=curWordSubsets[make_pair(curInt,curString)];
       }
       
     }
 
-    if(curMaxSubsetSize<minSubsetSize){
+    if((curMaxSubsetSize<minSubsetSize) || (curMaxSubsetSize==minSubsetSize && 
+      setWords.find(bestWord) == setWords.end() && setWords.find(curGuessWord)!=setWords.end())){
       minSubsetSize=curMaxSubsetSize;
       bestWord=curGuessWord;
     }
@@ -117,13 +120,12 @@ int main()
   string guess="";
   int guessNumber=0;
 
-
-
   do{
     guessNumber++;
-    guess=chooseOptimizedAnswer(setWords); // RandomAnswerChoose from set
-    // if(guessNumber==1)
-    //   guess="salet";
+    if(guessNumber==1)
+        guess="arise"; // First word is always this as no differentiating information yet, hence hard-coded to save processing time
+    else
+      guess=chooseOptimizedAnswer(setWords); // RandomAnswerChoose from set
     makeGuess(guessNumber,guess);
   }
   while(!computeGuess(guess)); // Removes impossible guesses
