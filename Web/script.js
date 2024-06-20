@@ -57,8 +57,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function checkGuess() {
         const guessedWord = guesses[currentRow].join('');
         if (guessedWord.length !== cols) return;
-        
-        // Check if the guessed word is valid ,  wait for promise
+
+        // Check if the guessed word is valid, wait for promise
         const isValid = await checkValidWord(guessedWord);
         if (!isValid) {
             alert('Invalid word! Please try again.');
@@ -71,23 +71,41 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         console.log("Guess:", guessedWord);
 
-        // First pass: mark correct letters
+        // Create arrays to track the status of each letter
+        let targetUsed = Array(cols).fill(false);
+        let guessStatus = Array(cols).fill('grey'); // Default to grey
+
+        // First pass: mark correct letters (green)
         guessArray.forEach((letter, index) => {
             if (letter === targetArray[index]) {
-                rowCells[index].style.backgroundColor = '#538d4e'; // Green
-                targetArray[index] = null; // Remove matched letter
-                guessArray[index] = null; // Remove matched letter
+                guessStatus[index] = 'green';
+                targetUsed[index] = true;
             }
         });
 
-        // Second pass: mark misplaced letters
+        // Second pass: mark misplaced letters (yellow) and incorrect (grey)
         guessArray.forEach((letter, index) => {
-            if (letter && targetArray.includes(letter)) {
+            if (guessStatus[index] !== 'green') {
+                const targetIndex = targetArray.findIndex((targetLetter, targetIndex) => targetLetter === letter && !targetUsed[targetIndex]);
+                if (targetIndex > -1) {
+                    guessStatus[index] = 'yellow';
+                    targetUsed[targetIndex] = true;
+                }
+            }
+        });
+
+        // Apply colors to cells
+        guessStatus.forEach((status, index) => {
+            if (status === 'green') {
+                rowCells[index].style.backgroundColor = '#538d4e'; // Green
+            } else if (status === 'yellow') {
                 rowCells[index].style.backgroundColor = '#b59f3b'; // Yellow
-                targetArray[targetArray.indexOf(letter)] = null; // Remove matched letter
-            } else if (letter) {
+            } else {
                 rowCells[index].style.backgroundColor = '#3a3a3c'; // Grey
             }
+
+            // Update the keyboard colors
+            updateKeyboardColor(guessArray[index], status);
         });
 
         // Check for win or lose condition
@@ -99,6 +117,31 @@ document.addEventListener("DOMContentLoaded", async () => {
             currentRow++;
             currentCol = 0;
         }
+    }
+
+    // RGB color values for comparison
+    const COLORS = {
+        green: 'rgb(83, 141, 78)',  // #538d4e
+        yellow: 'rgb(181, 159, 59)',  // #b59f3b
+        grey: 'rgb(58, 58, 60)'  // #3a3a3c
+    };
+
+    // Update the keyboard color based on the status
+    function updateKeyboardColor(letter, status) {
+        const buttons = document.querySelectorAll('#keyboard button');
+        buttons.forEach(button => {
+            if (button.textContent === letter) {
+                const currentColor = window.getComputedStyle(button).backgroundColor;
+
+                if (status === 'green' && currentColor !== COLORS.green) {
+                    button.style.backgroundColor = COLORS.green;
+                } else if (status === 'yellow' && currentColor !== COLORS.green && currentColor !== COLORS.yellow) {
+                    button.style.backgroundColor = COLORS.yellow;
+                } else if (status === 'grey' && ![COLORS.green, COLORS.yellow].includes(currentColor)) {
+                    button.style.backgroundColor = COLORS.grey;
+                }
+            }
+        });
     }
 
     // Handle keyboard input

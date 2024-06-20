@@ -16,6 +16,7 @@ app.get('/random-word', (req, res) => {
     const randomIndex = Math.floor(Math.random() * validAnswers.length);
     const randomWord = validAnswers[randomIndex];
     res.json({ word: randomWord });
+    console.log(`Random word: ${randomWord}`);
 });
 
 app.get('/check-word', (req, res) => {

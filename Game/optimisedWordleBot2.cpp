@@ -7,7 +7,8 @@ using namespace std;
 vector<string> orderedWords=getOrderedWords();
 vector<string> orderedAnswers=getOrderedAnswers();
 
-string generatedAnswer=chooseAnswer(orderedAnswers);
+// string generatedAnswer=chooseAnswer(orderedAnswers);
+string generatedAnswer="vinyl";
 
 set<string> setWords(orderedAnswers.begin(),orderedAnswers.end());
 
@@ -139,14 +140,14 @@ int main(int argc,char* argv[])
   cout<<"Number of guesses needed : "<<guessNumber<<endl;
   cout<<"WORDLE BOT IS TERMINATING"<<endl;
 
-  ofstream fout("Files/wordleGuessCount.txt",ios::app);
+  // ofstream fout("Files/wordleGuessCount.txt",ios::app);
   
-  fout<<guessNumber<<" "<<generatedAnswer;
+  // fout<<guessNumber<<" "<<generatedAnswer;
 
-  if(argc>1)
-      fout<<" "<<argv[1];
+  // if(argc>1)
+  //     fout<<" "<<argv[1];
 
-  fout<<endl;
+  // fout<<endl;
 
   return 0;
 }
