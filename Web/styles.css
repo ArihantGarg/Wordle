@@ -1,0 +1,64 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #121213;
+    color: #fff;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+#game {
+    text-align: center;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#board div {
+    width: 60px;
+    height: 60px;
+    background-color: #3a3a3c;
+    border: 2px solid #3a3a3c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+
+#keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#keyboard .row {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+#keyboard button {
+    background-color: #818384;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#keyboard button:hover {
+    background-color: #a1a1a3;
+}
+
+#keyboard button:active {
+    background-color: #565758;
+}

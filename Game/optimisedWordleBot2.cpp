@@ -25,9 +25,9 @@ void printGuess(string guess){
 }
 
 void makeGuess(int guessNumber, string guess){
-  // cout<<"Guess "<<guessNumber<<": ";
-  // printGuess(guess);
-  // cout<<endl;
+  cout<<"Guess "<<guessNumber<<": ";
+  printGuess(guess);
+  cout<<endl;
 }
 
 bool computeGuess(string guess){
@@ -120,8 +120,8 @@ int main(int argc,char* argv[])
   if(argc>1)
     generatedAnswer=orderedAnswers[stoi(argv[1])-1];
   
-  // cout<<"WORDLE BOT HAS STARTED\n";
-  // cout<<"Word to be guessed by program : "<<generatedAnswer<<"\n";
+  cout<<"WORDLE BOT HAS STARTED\n";
+  cout<<"Word to be guessed by program : "<<generatedAnswer<<"\n";
 
   string guess="";
   int guessNumber=0;
@@ -136,8 +136,8 @@ int main(int argc,char* argv[])
   }
   while(!computeGuess(guess)); // Removes impossible guesses
 
-  // cout<<"Number of guesses needed : "<<guessNumber<<endl;
-  // cout<<"WORDLE BOT IS TERMINATING"<<endl;
+  cout<<"Number of guesses needed : "<<guessNumber<<endl;
+  cout<<"WORDLE BOT IS TERMINATING"<<endl;
 
   ofstream fout("Files/wordleGuessCount.txt",ios::app);
   

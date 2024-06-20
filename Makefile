@@ -1,26 +1,5 @@
 .SILENT:
 
-all: main
-
-CXX = clang++
-override CXXFLAGS += -g -Wmost -Werror
-
-SRCS = $(shell find . -name '.ccls-cache' -type d -prune -o -type f -name '*.cpp' -print | sed -e 's/ /\\ /g')
-HEADERS = $(shell find . -name '.ccls-cache' -type d -prune -o -type f -name '*.h' -print)
-
-main: $(SRCS) $(HEADERS)
-	$(CXX) $(CXXFLAGS) $(SRCS) -o "$@"
-
-main-debug: $(SRCS) $(HEADERS)
-	$(CXX) $(CXXFLAGS) -U_FORTIFY_SOURCE -O0 $(SRCS) -o "$@"
-
-clean:
-	rm -f main main-debug
-
-
-# My commands
-
-
 cleanExecutables:
 	@rm Executables/*
 
@@ -86,7 +65,7 @@ NUM_ITERATIONS4 := 2315
 
 # Define a target that runs the command `NUM_ITERATIONS` times
 start_all:
-	@for i in $$(seq 1454 $(NUM_ITERATIONS4)); do \
+	@for i in $$(seq 1 $(NUM_ITERATIONS4)); do \
 		echo $$i; \
 		g++ Game/optimisedWordleBot2.cpp -o Executables/optimisedWordleBot2; \
 		./Executables/optimisedWordleBot2 $$i; \
