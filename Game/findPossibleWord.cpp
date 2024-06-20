@@ -33,7 +33,7 @@ void updateSetWords(vector<char> containsChars)
 
 int main(int argc,char* argv[])
 {
-  updateSetWords({'e','l','c'});
+  updateSetWords({'u','n','e'});
 
   for(auto curWord:setWords)
   {

@@ -12,6 +12,21 @@ async function fetchRandomWord() {
     }
 }
 
+async function checkValidWord(guessedWord) {
+    try {
+        const response = await fetch(`http://localhost:3000/check-word?word=${guessedWord}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.isValid;
+    }
+    catch (error) {
+        console.error('Error checking valid word:', error);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     const board = document.getElementById('board');
     const keyboard = document.getElementById('keyboard');
@@ -39,9 +54,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Check the guess against the target word
-    function checkGuess() {
+    async function checkGuess() {
         const guessedWord = guesses[currentRow].join('');
         if (guessedWord.length !== cols) return;
+        
+        // Check if the guessed word is valid ,  wait for promise
+        const isValid = await checkValidWord(guessedWord);
+        if (!isValid) {
+            alert('Invalid word! Please try again.');
+            return;
+        }
 
         const targetArray = targetWord.split('');
         const guessArray = guessedWord.split('');
