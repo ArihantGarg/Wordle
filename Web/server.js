@@ -15,6 +15,7 @@ app.use(cors());
 app.get('/random-word', (req, res) => {
     const randomIndex = Math.floor(Math.random() * validAnswers.length);
     const randomWord = validAnswers[randomIndex];
+    // const randomWord = 'rover'; // Hardcoded word for testing
     res.json({ word: randomWord });
     console.log(`Random word: ${randomWord}`);
 });

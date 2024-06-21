@@ -7,7 +7,8 @@ using namespace std;
 vector<string> orderedWords=getOrderedWords();
 vector<string> orderedAnswers=getOrderedAnswers();
 
-string generatedAnswer=chooseAnswer(orderedAnswers);
+// string generatedAnswer=chooseAnswer(orderedAnswers);
+string generatedAnswer="coyly";
 
 set<string> setWords(orderedAnswers.begin(),orderedAnswers.end());
 

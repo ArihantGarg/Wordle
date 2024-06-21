@@ -4,9 +4,24 @@ let guessesLog = [];
 
 // Best guess
 
+async function runCpp(req, res) {
+    try {
+        const queryParam = encodeURIComponent(JSON.stringify(guessesLog));
+        const response = await fetch('http://localhost:3000/runCpp?guesses=' + queryParam);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error running C++:', error);
+        throw error; // Re-throw error to propagate it if needed
+    }
+}
+
 async function fetchBestGuess() {
     try {
         const response = await fetch('http://localhost:3000/getBestGuess');
+        await new Promise(resolve => setTimeout(resolve, 1000));
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -15,36 +30,19 @@ async function fetchBestGuess() {
         return data.guess.toUpperCase();
     } catch (error) {
         console.error('Error fetching best guess:', error);
-    }
-}
-
-
-async function runCpp(req, res) {
-    try {
-        const queryParam = encodeURIComponent(JSON.stringify(guessesLog));
-        const response = await fetch('http://localhost:3000/runCpp?guesses=' + queryParam);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-    } catch (error) {
-        console.error('Error running C++:', error);
+        throw error; // Re-throw error to propagate it if needed
     }
 }
 
 async function compute() {
     try {
-        await runCpp();
-        // Wait until the C++ program finishes running
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        await fetchBestGuess();
+        await runCpp(); // Wait for C++ computation to finish
+        await fetchBestGuess(); // After C++ computation, fetch best guess
     } catch (error) {
         console.error('Main process error:', error);
+        throw error; // Re-throw error to propagate it if needed
     }
 }
-
-// Run the compute process initially
-compute();
 
 
 
@@ -79,6 +77,7 @@ async function checkValidWord(guessedWord) {
 }
 
 let gameEnded = false;
+
 
 document.addEventListener("DOMContentLoaded", async () => {
     const board = document.getElementById('board');
@@ -178,10 +177,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             currentRow++;
             currentCol = 0;
         }
-
-        // Update robot best guess
-
-        compute();
     }
 
     // RGB color values for comparison
@@ -242,6 +237,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.addEventListener('keydown', (event) => {
         if(gameEnded) return;
         handleKeyInput(event.key);
+    });
+
+    // Fill Best Guess button click handler
+    const fillBestGuessButton = document.getElementById('fillBestGuess');
+    fillBestGuessButton.addEventListener('click', async () => {
+        if (!gameEnded) {
+            try {
+                // Disable button to prevent multiple clicks
+                fillBestGuessButton.disabled = true;
+                fillBestGuessButton.style.backgroundColor = '#3a3a3c'; // Grey
+
+                // Ensure C++ computation and fetching of best guess are completed
+                await compute();
+                
+                // Now fetch the best guess
+                const bestGuess = await fetchBestGuess();
+                
+                if (bestGuess) {
+                    guesses[currentRow] = bestGuess.split('');
+                    updateBoard();
+                    await checkGuess(); // Wait for checkGuess to finish
+                }
+            } catch (error) {
+                console.error('Error filling best guess:', error);
+            } finally {
+                // Enable button after async operations complete (success or error)
+                fillBestGuessButton.disabled = false;
+                fillBestGuessButton.style.backgroundColor = '#538d4e'; // Green
+            }
+        }
+    });
+
+
+    // New Game button click handler
+    const newGameButton = document.getElementById('newGame');
+    newGameButton.addEventListener('click', () => {
+        window.location.reload();
     });
 
     updateBoard();

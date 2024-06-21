@@ -13,8 +13,24 @@ void computeGuess(string guess, string result)
 {
     set<string> toErase;
 
+    int cnt[26] = {0};
+
+    for (int i=0;i<5;i++)
+    {
+        cnt[guess[i]-'a']++;
+    }
+
+    unordered_map<int,vector<int>> mp;
+
+    // Handling single occurence letters
     for (int i = 0; i < 5; i++)
     {
+        if(cnt[guess[i]-'a']!=1)
+        {
+            mp[guess[i]-'a'].push_back(i);
+            continue;
+        }
+
         if (result[i] == 'G')
         {
             for (auto curWord : setWords)
@@ -47,6 +63,93 @@ void computeGuess(string guess, string result)
         }
     }
 
+    // Erasing the words with single occurence letters
+    for (auto curWord : toErase)
+    {
+        setWords.erase(curWord);
+    }
+    toErase.clear();
+
+    // Handling multiple occurence letters
+    for (auto cur : mp)
+    {
+        int curLetter = cur.first;
+        vector<int> curIndices = cur.second;
+
+        bool allBlack = true;
+
+        for (auto curIndex : curIndices)
+        {
+            if (result[curIndex] != 'B')
+            {
+                allBlack = false;
+                break;
+            }
+        }
+
+        // Only erase non occurences if all black
+        if (allBlack == true)
+        {
+            for (auto curWord : setWords)
+            {
+                if (curWord.find(guess[curIndices[0]]) != string::npos)
+                {
+                    toErase.insert(curWord);
+                }
+            }
+
+            continue;
+        }
+
+        // If not all black, then erase the words accordingly
+
+        int numBlack = 0;
+
+        for (auto curIndex : curIndices)
+        {
+            if (result[curIndex] == 'G')
+            {
+                for (auto curWord : setWords)
+                {
+                    if (curWord[curIndex] != guess[curIndex])
+                    {
+                        toErase.insert(curWord);
+                    }
+                }
+            }
+            else if (result[curIndex] == 'Y')
+            {
+                for (auto curWord : setWords)
+                {
+                    if (curWord[curIndex] == guess[curIndex] || curWord.find(guess[curIndex]) == string::npos)
+                    {
+                        toErase.insert(curWord);
+                    }
+                }
+            }
+            else
+            {
+                numBlack++;
+            }
+        }
+
+        
+        // Removing words with unequal occurences of the letter if it contains black as now we know exact number of occurences
+        if(numBlack)
+        {
+            int numOccurences = curIndices.size()-numBlack;
+            for(auto curWord : setWords)
+            {
+                int curWordOccurences = count(curWord.begin(),curWord.end(),guess[curIndices[0]]);
+                if(curWordOccurences!=numOccurences)
+                {
+                    toErase.insert(curWord);
+                }
+            }
+        }
+    }
+
+    // Erasing the words
     for (auto curWord : toErase)
     {
         setWords.erase(curWord);
