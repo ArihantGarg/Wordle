@@ -47,6 +47,91 @@ app.get('/check-word', (req, res) => {
     res.json({ isValid: isValid });
 });
 
+
+// GET BEST GUESS
+
+function getGuessFromFile() {
+    const guess = fs.readFileSync('Files/bestGuess.txt', 'utf-8').trim();
+    return guess;
+}
+
+app.get('/getBestGuess', (req, res) => {
+    console.log(req.query);
+    const guess = getGuessFromFile();
+    res.json({ guess: guess });
+    console.log(`Best guess: ${guess}`);
+});
+
+
+// RUN CPP FILE
+
+
+const { exec } = require('child_process');
+const path = require('path');
+
+const cppFile = './Game/getBestGuess.cpp';
+const outputFile = './Executables/getBestGuess.exe';
+
+app.get('/runCpp', (req, res) => {
+    // Compile the C++ file
+    exec(`g++ -o ${outputFile} ${cppFile}`, (compileError, compileStdout, compileStderr) => {
+        if (compileError) {
+            console.error(`Error compiling C++ program: ${compileError.message}`);
+            return;
+        }
+
+        if (compileStderr) {
+            console.error(`Compile stderr: ${compileStderr}`);
+            return;
+        }
+
+        // Get the absolute path to the executable
+        exePath = 'C:/Users/ariha/Documents/GitHub_Repos/Wordle/Executables/getBestGuess.exe' 
+
+        // Example guessesLog string
+        const guessesLog = req.query.guesses;
+
+        console.log('Guesses log:', guessesLog);
+
+        // Parse the guessesLog string into a JavaScript array
+        const guesses = JSON.parse(guessesLog);
+
+        // Construct command with arguments
+        const command = `${exePath} ${guesses.map(arr => arr.join(' ')).join(' ')}`;
+
+        console.log('Executing command:', command);
+
+        // Run the compiled executable with arguments
+        exec(command, (runError, runStdout, runStderr) => {
+            if (runError) {
+                console.error(`Error executing C++ program: ${runError.message}`);
+                return;
+            }
+
+            if (runStderr) {
+                console.error(`Run stderr: ${runStderr}`);
+                return;
+            }
+        });
+
+        res.json({ success: true });
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });

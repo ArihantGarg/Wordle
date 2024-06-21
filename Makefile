@@ -71,3 +71,8 @@ start_all:
 		./Executables/optimisedWordleBot2 $$i; \
 	done
 	$(MAKE) cleanExecutables
+
+guess:
+	g++ Game/getBestGuess.cpp -o Executables/getBestGuess
+	./Executables/getBestGuess
+	$(MAKE) cleanExecutables

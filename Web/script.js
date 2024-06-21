@@ -1,3 +1,54 @@
+// Storing guesses and result
+
+let guessesLog = [];
+
+// Best guess
+
+async function fetchBestGuess() {
+    try {
+        const response = await fetch('http://localhost:3000/getBestGuess');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Best guess : " + data.guess.toUpperCase());
+        return data.guess.toUpperCase();
+    } catch (error) {
+        console.error('Error fetching best guess:', error);
+    }
+}
+
+
+async function runCpp(req, res) {
+    try {
+        const queryParam = encodeURIComponent(JSON.stringify(guessesLog));
+        const response = await fetch('http://localhost:3000/runCpp?guesses=' + queryParam);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+    } catch (error) {
+        console.error('Error running C++:', error);
+    }
+}
+
+async function compute() {
+    try {
+        await runCpp();
+        // Wait until the C++ program finishes running
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await fetchBestGuess();
+    } catch (error) {
+        console.error('Main process error:', error);
+    }
+}
+
+// Run the compute process initially
+compute();
+
+
+
+
 // Define the function to fetch a random word from the server
 async function fetchRandomWord() {
     try {
@@ -26,6 +77,8 @@ async function checkValidWord(guessedWord) {
         console.error('Error checking valid word:', error);
     }
 }
+
+let gameEnded = false;
 
 document.addEventListener("DOMContentLoaded", async () => {
     const board = document.getElementById('board');
@@ -69,7 +122,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const guessArray = guessedWord.split('');
         const rowCells = Array.from(board.children).slice(currentRow * cols, (currentRow + 1) * cols);
 
-        console.log("Guess:", guessedWord);
+        // console.log("Guess:", guessedWord);
+
+        // Logging guess
+
+        guessesLog[currentRow] = [guessedWord.toString().toLowerCase(), "BBBBB"];
 
         // Create arrays to track the status of each letter
         let targetUsed = Array(cols).fill(false);
@@ -80,6 +137,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (letter === targetArray[index]) {
                 guessStatus[index] = 'green';
                 targetUsed[index] = true;
+                guessesLog[currentRow][1] = guessesLog[currentRow][1].substring(0, index) + 'G' + guessesLog[currentRow][1].substring(index + 1);
             }
         });
 
@@ -90,6 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (targetIndex > -1) {
                     guessStatus[index] = 'yellow';
                     targetUsed[targetIndex] = true;
+                    guessesLog[currentRow][1] = guessesLog[currentRow][1].substring(0, index) + 'Y' + guessesLog[currentRow][1].substring(index + 1);
                 }
             }
         });
@@ -111,12 +170,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Check for win or lose condition
         if (guessedWord === targetWord) {
             setTimeout(() => alert('Congratulations! You guessed the word!'), 100);
+            gameEnded = true;
         } else if (currentRow === rows - 1) {
             setTimeout(() => alert(`Game Over! The word was: ${targetWord}`), 100);
+            gameEnded = true;
         } else {
             currentRow++;
             currentCol = 0;
         }
+
+        // Update robot best guess
+
+        compute();
     }
 
     // RGB color values for comparison
@@ -146,6 +211,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Handle keyboard input
     function handleKeyInput(key) {
+        if (gameEnded) return;
+
         if (key === 'Enter') {
             checkGuess();
         } else if (key === 'Backspace' || key === '⌫') {
@@ -164,6 +231,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     keyboard.addEventListener('click', (event) => {
+        if(gameEnded) return;
         const target = event.target;
         if (target.tagName === 'BUTTON') {
             const key = target.textContent;
@@ -172,6 +240,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     document.addEventListener('keydown', (event) => {
+        if(gameEnded) return;
         handleKeyInput(event.key);
     });
 
