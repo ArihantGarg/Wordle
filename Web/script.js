@@ -34,15 +34,15 @@ async function fetchBestGuess() {
     }
 }
 
-async function compute() {
-    try {
-        await runCpp(); // Wait for C++ computation to finish
-        await fetchBestGuess(); // After C++ computation, fetch best guess
-    } catch (error) {
-        console.error('Main process error:', error);
-        throw error; // Re-throw error to propagate it if needed
-    }
-}
+// async function compute() {
+//     try {
+//         await runCpp(); // Wait for C++ computation to finish
+//         await fetchBestGuess(); // After C++ computation, fetch best guess
+//     } catch (error) {
+//         console.error('Main process error:', error);
+//         throw error; // Re-throw error to propagate it if needed
+//     }
+// }
 
 
 
@@ -248,8 +248,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 fillBestGuessButton.disabled = true;
                 fillBestGuessButton.style.backgroundColor = '#3a3a3c'; // Grey
 
-                // Ensure C++ computation and fetching of best guess are completed
-                await compute();
+                // Ensure C++ computation is completed
+                await runCpp();
                 
                 // Now fetch the best guess
                 const bestGuess = await fetchBestGuess();

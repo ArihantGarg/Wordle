@@ -57,14 +57,11 @@ function getGuessFromFile() {
 }
 
 app.get('/getBestGuess', (req, res) => {
-    console.log(req.query);
+    // console.log(req.query);
     const guess = getGuessFromFile();
     res.json({ guess: guess });
     console.log(`Best guess: ${guess}`);
 });
-
-
-// RUN CPP FILE
 
 
 const { exec } = require('child_process');
@@ -74,50 +71,70 @@ const cppFile = './Game/getBestGuess.cpp';
 const outputFile = './Executables/getBestGuess.exe';
 
 app.get('/runCpp', (req, res) => {
-    // Compile the C++ file
-    exec(`g++ -o ${outputFile} ${cppFile}`, (compileError, compileStdout, compileStderr) => {
-        if (compileError) {
-            console.error(`Error compiling C++ program: ${compileError.message}`);
-            return;
+    // Check if the executable file already exists
+    fs.access(outputFile, fs.constants.F_OK, (err) => {
+        if (err) {
+            // File does not exist, compile the C++ file
+
+            console.log('Compiling C++ program...');
+
+            exec(`g++ -o ${outputFile} ${cppFile}`, (compileError, compileStdout, compileStderr) => {
+                if (compileError) {
+                    console.error(`Error compiling C++ program: ${compileError.message}`);
+                    res.status(500).json({ error: 'Error compiling C++ program' });
+                    return;
+                }
+
+                if (compileStderr) {
+                    console.error(`Compile stderr: ${compileStderr}`);
+                    res.status(500).json({ error: 'Compilation error' });
+                    return;
+                }
+
+                // Proceed to run the compiled executable
+                runExecutable(req, res);
+            });
+        } else {
+            // File exists, run the executable directly
+            runExecutable(req, res);
         }
-
-        if (compileStderr) {
-            console.error(`Compile stderr: ${compileStderr}`);
-            return;
-        }
-
-        // Get the absolute path to the executable
-        exePath = 'C:/Users/ariha/Documents/GitHub_Repos/Wordle/Executables/getBestGuess.exe' 
-
-        // Example guessesLog string
-        const guessesLog = req.query.guesses;
-
-        console.log('Guesses log:', guessesLog);
-
-        // Parse the guessesLog string into a JavaScript array
-        const guesses = JSON.parse(guessesLog);
-
-        // Construct command with arguments
-        const command = `${exePath} ${guesses.map(arr => arr.join(' ')).join(' ')}`;
-
-        console.log('Executing command:', command);
-
-        // Run the compiled executable with arguments
-        exec(command, (runError, runStdout, runStderr) => {
-            if (runError) {
-                console.error(`Error executing C++ program: ${runError.message}`);
-                return;
-            }
-
-            if (runStderr) {
-                console.error(`Run stderr: ${runStderr}`);
-                return;
-            }
-        });
-
-        res.json({ success: true });
     });
 });
+
+function runExecutable(req, res) {
+    // Get the absolute path to the executable
+    const exePath = path.resolve(outputFile);
+
+    // Example guessesLog string
+    const guessesLog = req.query.guesses;
+
+    console.log('Guesses log:', guessesLog);
+
+    // Parse the guessesLog string into a JavaScript array
+    const guesses = JSON.parse(guessesLog);
+
+    // Construct command with arguments
+    const command = `${exePath} ${guesses.map(arr => arr.join(' ')).join(' ')}`;
+
+    console.log('Executing command:', command);
+
+    // Run the compiled executable with arguments
+    exec(command, (runError, runStdout, runStderr) => {
+        if (runError) {
+            console.error(`Error executing C++ program: ${runError.message}`);
+            res.status(500).json({ error: 'Error executing C++ program' });
+            return;
+        }
+
+        if (runStderr) {
+            console.error(`Run stderr: ${runStderr}`);
+            res.status(500).json({ error: 'Execution error' });
+            return;
+        }
+
+        res.json({ success: true, output: runStdout });
+    });
+}
 
 
 
