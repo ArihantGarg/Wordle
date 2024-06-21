@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Check if the guessed word is valid, wait for promise
         const isValid = await checkValidWord(guessedWord);
         if (!isValid) {
-            alert('Invalid word! Please try again.');
+            // alert('Invalid word! Please try again.');
             return;
         }
 
@@ -168,11 +168,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Check for win or lose condition
         if (guessedWord === targetWord) {
-            setTimeout(() => alert('Congratulations! You guessed the word!'), 100);
+            // setTimeout(() => alert('Congratulations! You guessed the word!'), 100);
             gameEnded = true;
+            postResults(true,guessedWord,guessesLog.length);
         } else if (currentRow === rows - 1) {
-            setTimeout(() => alert(`Game Over! The word was: ${targetWord}`), 100);
+            // setTimeout(() => alert(`Game Over! The word was: ${targetWord}`), 100);
             gameEnded = true;
+            postResults(false,guessedWord,7);
         } else {
             currentRow++;
             currentCol = 0;
@@ -206,6 +208,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Handle keyboard input
     function handleKeyInput(key) {
+        if(fillBestGuessButton.disabled) return;
         if (gameEnded) return;
 
         if (key === 'Enter') {
@@ -226,6 +229,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     keyboard.addEventListener('click', (event) => {
+        if(fillBestGuessButton.disabled) return;
         if(gameEnded) return;
         const target = event.target;
         if (target.tagName === 'BUTTON') {
@@ -235,6 +239,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     document.addEventListener('keydown', (event) => {
+        if(fillBestGuessButton.disabled) return;
         if(gameEnded) return;
         handleKeyInput(event.key);
     });
@@ -269,6 +274,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    // Periodic event to start new game
+
+    setInterval(() => {
+        if(gameEnded){
+            // Click new game button
+            const newGameButton = document.getElementById('newGame');
+            newGameButton.click();
+        }
+    }, 1000);
+
+    // Periodic event to click fill best guess button
+
+    setInterval(() => {
+        if(!gameEnded){
+            // Click fill best guess button
+            const fillBestGuessButton = document.getElementById('fillBestGuess');
+            fillBestGuessButton.click();
+        }
+    }, 1000);
 
     // New Game button click handler
     const newGameButton = document.getElementById('newGame');
@@ -278,3 +302,31 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     updateBoard();
 });
+
+
+async function postResults(isWin, word, tries) {
+    const data = {
+        isWin: isWin,
+        word: word,
+        tries: tries
+    };
+
+    try {
+        const response = await fetch('http://localhost:3000/postResults', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log(result.message); // Should print 'Data received successfully'
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}

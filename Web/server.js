@@ -136,8 +136,40 @@ function runExecutable(req, res) {
     });
 }
 
+// Logging result of the game
 
+// function postResults(isWin,word,tries) {
+//     fetch('http://localhost:3000/postResults', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ isWin: isWin, word: word, tries: tries}),
+//     })
+//         .then(response => response.json())
+//         .then(data => {
+//             console.log('Success:', data);
+//         })
+//         .catch((error) => {
+//             console.error('Error:', error);
+//         });
+// }
 
+const logFile = path.join(__dirname,'../Files/webGuessCount.txt');
+console.log(logFile);
+
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+
+app.post('/postResults', (req, res) => {
+    console.log(req.body);
+    const { isWin, word, tries } = req.body;
+    fs.appendFileSync(logFile, `${tries} ${word.toLowerCase()}\n`);
+    // console.log(`Received data: isWin = ${isWin}, word = ${word}, tries = ${tries}`);
+
+    // Send a response back to the client
+    res.json({ message: 'Data received successfully' });
+});
 
 
 
