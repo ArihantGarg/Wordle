@@ -12,8 +12,18 @@ const validWords = fs.readFileSync('Files/allWords.txt', 'utf-8').trim().split(/
 // Use CORS middleware
 app.use(cors());
 
+let curIndex = 0;
+
 app.get('/random-word', (req, res) => {
-    const randomIndex = Math.floor(Math.random() * validAnswers.length);
+    // const randomIndex = Math.floor(Math.random() * validAnswers.length);
+    if(curIndex>=2315)
+    {
+        console.log("Test finished");
+        // Crash program
+        return;
+    }
+    const randomIndex = curIndex;
+    curIndex+=1;
     const randomWord = validAnswers[randomIndex];
     // const randomWord = 'rover'; // Hardcoded word for testing
     res.json({ word: randomWord });

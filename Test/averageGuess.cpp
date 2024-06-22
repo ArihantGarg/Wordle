@@ -3,7 +3,7 @@ using namespace std;
 
 int main()
 {
-  ifstream fin("Files/temp.txt");
+  ifstream fin("Files/wordleGuessCount.txt");
   long long guessSum=0;
   long long num=0;
 

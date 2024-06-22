@@ -76,3 +76,8 @@ guess:
 	g++ Game/getBestGuess.cpp -o Executables/getBestGuess
 	./Executables/getBestGuess
 	$(MAKE) cleanExecutables
+
+same:
+	g++ Test/checkSame.cpp -o Executables/checkSame
+	./Executables/checkSame
+	$(MAKE) cleanExecutables

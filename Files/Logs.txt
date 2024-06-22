@@ -1,0 +1,11 @@
+Error in count clasp: 4 , clasp: 3
+Error in count cocoa: 4 , cocoa: 5
+Error in count coyly: 5 , coyly: 4
+Error in count gazer: 5 , gazer: 4
+Error in count idiom: 4 , idiom: 3
+Error in count lofty: 4 , lofty: 5
+Error in count loopy: 5 , loopy: 4
+Error in count magic: 4 , magic: 3
+Error in count manic: 4 , manic: 3
+Error in count palsy: 4 , palsy: 3
+Error in count plain: 3 , plain: 4
